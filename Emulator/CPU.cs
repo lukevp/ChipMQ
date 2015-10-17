@@ -18,10 +18,13 @@ namespace Emulator
         private byte[] registers = new byte[0x10];
 
         // 16-bit address pointer
-        private ushort i = 0;
+        private int i = 0;
+
+        // 16-bit program counter
+        private int pc = 512;
 
         // start with 16 levels of stack.
-        private Stack<ushort> s = new Stack<ushort>(16);
+        private Stack<int> s = new Stack<int>(16);
 
         private int delayTimer = 0;
         private int soundTimer = 0;
@@ -112,7 +115,89 @@ namespace Emulator
         private void step()
         {
             // for now, just randomly set some areas of the screen.
-            // TODO: implement real step and emulation.
+
+            //grab current opcode from PC
+
+            int opcode = (ram[pc] << 8 + ram[pc + 1]) & 0xFFFF;
+            int nnn = opcode & 0x0FFF;
+            int kk = opcode & 0x00FF;
+            int w = opcode & 0xF000;
+            int x = opcode & 0x0F00;
+            int y = opcode & 0x00F0;
+            int n = opcode & 0x000F;
+
+            switch (w)
+            {
+                case 0x0:
+                    if (opcode == 0x00E0) // CLS - Clear the Display
+                    {
+                        this.display = new byte[64 * 5];
+                    }
+                    else if (opcode == 0x00EE) // RET - Return from Subroutine
+                    {
+                        if (s.Count > 0)
+                        { 
+                            pc = s.Pop();
+                        }
+                        else
+                        {
+                            // TODO: emit debug for this
+                            Console.WriteLine("Unable to RET from subroutine because stack is empty!");
+                        }
+                    }
+                    break;
+                case 0x1:
+                    // JMP - Unconditional Jump
+                    pc = nnn;
+                    break;
+                case 0x2:
+                    // SUB - Call Subroutine.
+                    s.Push(pc);
+                    pc = nnn;
+                    break;
+                case 0x3:
+                    // SE - Skip next instruction if register x is equal to kk
+                    if (registers[x] == kk)
+                    {
+                        pc += 2;
+                    }
+                    break;
+                case 0x4:
+                    // SNE - Skip next instruction if register x is not equal to kk.
+                    if (registers[x] != kk)
+                    {
+                        pc += 2;
+                    }
+                    break;
+                case 0x5:
+                    // SEQ - Skip next instruction if register x is equal to register y.
+                    if (registers[x] == registers[y])
+                    {
+                        pc += 2;
+                    }
+                    break;
+                case 0x6:
+                    break;
+                case 0x7:
+                    break;
+                case 0x8:
+                    break;
+                case 0x9:
+                    break;
+                case 0xA:
+                    break;
+                case 0xB:
+                    break;
+                case 0xC:
+                    break;
+                case 0xD:
+                    break;
+                case 0xE:
+                    break;
+                case 0xF:
+                    break;
+            }
+            
             Random r = new Random();
             for (int i = 0; i < 32; i++)
             {
