@@ -26,8 +26,8 @@ namespace Emulator
         // start with 16 levels of stack.
         private Stack<int> s = new Stack<int>(16);
 
-        private int delayTimer = 0;
-        private int soundTimer = 0;
+        private byte delayTimer = 0;
+        private byte soundTimer = 0;
 
         // 64 x 32 pixel display - but it's only black / white so we are bit packing the X axis into 32/8 bytes = 5 bytes per, * 64 columns.
         private byte[] display = new byte[64 * 5];
@@ -114,17 +114,17 @@ namespace Emulator
 
         private void step()
         {
-            // for now, just randomly set some areas of the screen.
-
-            //grab current opcode from PC
-
+            //grab current opcode and all opcode structures from PC
             int opcode = (ram[pc] << 8 + ram[pc + 1]) & 0xFFFF;
             int nnn = opcode & 0x0FFF;
-            int kk = opcode & 0x00FF;
+            byte kk = (byte)(opcode & 0x00FF);
             int w = opcode & 0xF000;
             int x = opcode & 0x0F00;
             int y = opcode & 0x00F0;
-            int n = opcode & 0x000F;
+            int z = opcode & 0x000F;
+
+            // special handling for Fx0A - wait for a key press, store value of the key in VX
+            // since this stops execution it has to be inserted before any other processing.
 
             switch (w)
             {
@@ -177,32 +177,176 @@ namespace Emulator
                     }
                     break;
                 case 0x6:
+                    // SET - set kk into register x.
+                    registers[x] = kk;
                     break;
                 case 0x7:
+                    // INC - Increment register x by kk.
+                    registers[x] += kk;
                     break;
                 case 0x8:
+                    switch (z)
+                    {
+                        case 0:
+                            // LD - Store register y in x.
+                            registers[x] = registers[y];
+                            break;
+                        case 1:
+                            // OR - set register x to register x OR register y.
+                            registers[x] = (byte)(registers[x] | registers[y]);
+                            break;
+                        case 2:
+                            // AND - set register x to register x AND register y.
+                            registers[x] = (byte)(registers[x] & registers[y]);
+                            break;
+                        case 3:
+                            // XOR - set register x to register x XOR register y.
+                            registers[x] = Convert.ToByte(registers[x] ^ registers[y]);
+                            break;
+                        case 4:
+                            // ADD - set register x to register x + register y, set register 0xF to carry.
+                            try
+                            {
+                                registers[x] = Convert.ToByte(registers[x] + registers[y]);
+                                registers[0xF] = 0x00;
+                            }
+                            catch (OverflowException)
+                            {
+                                registers[x] = (byte)(registers[x] + registers[y]);
+                                registers[0xF] = 0x01;
+                            }
+                            break;
+                        case 5:
+                            // SUB - set register x to register x - register y.  
+                            // If result is positive (register x >  register y), set register 0xF to 1.
+                            // Otherwise, set register 0xF to 0.
+                            registers[0xF] = (byte)((registers[x] > registers[y]) ? 1 : 0);
+                            registers[x] = (byte)(registers[x] - registers[y]);
+                            break;
+                        case 6:
+                            // SR - shift right, put overflow (lowest bit) into register 0xF.
+                            registers[0xF] = (byte)(registers[x] & 0x01);
+                            registers[x] = (byte)(registers[x] >> 1);
+                            break;
+                        case 7:
+                            // SBY - subtract register y from register x.
+                            // This differs from SUB because it subtracts register y from x instead of vice versa.
+                            // store result in register x. 
+                            // if register y > register x, set register 0xF to 1, otherwise 0.
+                            registers[0xF] = (byte)((registers[y] > registers[x]) ? 1 : 0);
+                            registers[x] = (byte)(registers[y] - registers[x]);
+                            break;
+                        case 0xE:
+                            // SHL - shift left, put overflow (highest bit) into register 0xF.
+                            registers[0xF] = (byte)(registers[x] & 0x80);
+                            registers[x] = (byte)(registers[x] << 1);
+                            break;
+                    }
                     break;
                 case 0x9:
+                    //SNY - skip if register x != register y.
+                    if (registers[x] != registers[y])
+                        pc += 2;
                     break;
                 case 0xA:
+                    // LDI - Set i pointer to nnn.
+                    i = nnn;
                     break;
                 case 0xB:
+                    // JPN - Jump to nnn + register 0.
+                    pc = nnn + registers[0];
                     break;
                 case 0xC:
+                    // RND - use kk as a mask for a randomly generated byte and store in register x.
+                    Random r = new Random();
+                    byte[] result = new byte[1];
+                    r.NextBytes(result);
+                    registers[x] = (byte)(result[0] & kk);
                     break;
                 case 0xD:
+                    // Draw n-byte sprite stored in memory at i, at coordinates (register x, register y).
+                    // use XOR.  if any pixels are erased register 0xF = 1, otherwise 0. 
+                    // sprites wrap around the display.
+                    // TODO: implement drawing.
                     break;
                 case 0xE:
+                    switch(kk)
+                    {
+                        case 0x9E:
+                            // SKP - skip next instruction if key with the value in register x is pressed.
+                            // TODO: implement keyboard input.
+                            break;
+                        case 0xA1:
+                            // SKN - skip next instruction if key with the value in register x is not pressed.
+                            // TODO: implement keyboard input.
+                            // HACK: assume all keys are not pressed for now.
+                            pc += 2;
+                            break;
+                    }
                     break;
                 case 0xF:
+                    switch (kk)
+                    {
+                        case 0x07:
+                            // LDT - load delay timer into register x.
+                            registers[x] = delayTimer;
+                            break;
+                        case 0x0A:
+                            // KP - wait for keypress.  This is handled outside of this structure
+                            //since it has to handle stopping all execution.
+                            // TODO: remove this (used for debugging).
+                            Console.WriteLine("Fx0A pressed!");
+                            break;
+                        case 0x15:
+                            // SDT - set delay timer to value in register x.
+                            delayTimer = registers[x];
+                            break;
+                        case 0x18:
+                            // SST - set sound timer to value in register x.
+                            soundTimer = registers[x];
+                            break;
+                        case 0x1E:
+                            // SEI - set i to register x + i.
+                            i = i + registers[x];
+                            break;
+                        case 0x29:
+                            // SIF - Set i to location of sprite for font for digit stored in register x.
+                            // fonts are stored at 0x00, and are 5 bytes each.
+                            i = registers[x] * 5;
+                            break;
+                        case 0x33:
+                            // BCD - load BCD representation of register x in i, i+1, i+2.
+                            // TODO: i'm assuming i doesn't get incremented.  check assumption.
+                            var temp = registers[x];
+                            for (int o = 2; o >= 0; o--)
+                            {
+                                ram[i+o] = (byte)(temp % 10);
+                                temp /= 10;
+                            }
+                            break;
+                        case 0x55:
+                            // MVR - move registers into memory starting at location i.
+                            var offset = i;
+                            for (int o = 0; o < x; o++)
+                            {
+                                ram[offset] = registers[o];
+                                offset += 1;
+                            }
+                            break;
+                        case 0x65:
+                            // RDR - read registers from memory starting at location i.
+                            var offset2 = i;
+                            for (int o = 0; o < x; o++)
+                            {
+                                registers[o] = ram[offset2];
+                                offset2 += 1;
+                            }
+                            break;
+                    }
                     break;
             }
-            
-            Random r = new Random();
-            for (int i = 0; i < 32; i++)
-            {
-                display[i] = Convert.ToByte(r.Next() % 256);
-            }
+            // increment PC to next instruction.
+            pc += 2;
         }
     }
 
