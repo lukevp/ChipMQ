@@ -96,8 +96,8 @@ namespace Emulator
             {
                 accumulatedMillisecondsTimer -= millisecondsPerTimerStep;
                 // Decrement timers but don't let them go below 0.
-                delayTimer = Math.Max(0, delayTimer - 1);
-                soundTimer = Math.Max(0, soundTimer - 1);
+                delayTimer = (byte)(Math.Max(0, delayTimer - 1));
+                soundTimer = (byte)(Math.Max(0, soundTimer - 1));
             }
 
             // CPU simulation runs independent of timer intervals.  call step for every
