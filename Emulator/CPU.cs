@@ -37,8 +37,7 @@ namespace Emulator
         private double lastMilliseconds = 0;
         private double accumulatedMillisecondsCPU = 0;
         private double accumulatedMillisecondsTimer = 0;
-
-
+        
         public string GetCompressedDisplay()
         {
             return Convert.ToBase64String(display);
@@ -48,7 +47,27 @@ namespace Emulator
         public CPU(int stepspersecond)
         {
             this.millisecondsPerCPUStep = (1000.0 / Math.Min(1000, stepspersecond));
-            //TODO: load font data into RAM below 512 bytes.
+            byte[] fonts = new byte[] {
+                0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+                0x20, 0x60, 0x20, 0x20, 0x70, // 1
+                0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+                0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+                0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+                0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+                0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+                0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+                0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+                0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+                0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+                0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+                0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+                0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+                0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+                0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+            };
+            
+            // Load font data into RAM below 512 bytes.
+            fonts.CopyTo(this.ram, 0);
             this.stopwatch = new Stopwatch();
             this.Reset();
         }
