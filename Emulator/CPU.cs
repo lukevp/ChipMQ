@@ -29,8 +29,77 @@ namespace Emulator
         private byte delayTimer = 0;
         private byte soundTimer = 0;
 
-        // 64 x 32 pixel display - but it's only black / white so we are bit packing the X axis into 32/8 bytes = 5 bytes per, * 64 columns.
-        private byte[] display = new byte[64 * 5];
+        
+        private bool[,] display = new bool[64, 32]
+            {
+                { true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true },
+                { false, true, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true },
+                { false, false, true, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true },
+                { false, false, false, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true },
+                { false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true },
+                { false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false },
+                { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false },
+                { false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false },
+                { false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false },
+                { false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false },
+                { false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false },
+                { true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true }
+        };
+
+        // 16 keys that can be pressed at any one time.
+        private bool[] keys = new bool[16];
 
         private double millisecondsPerCPUStep;
         private double millisecondsPerTimerStep = (1000.0 / 60);
@@ -40,16 +109,58 @@ namespace Emulator
         private double lastMilliseconds = 0;
         private double accumulatedMillisecondsCPU = 0;
         private double accumulatedMillisecondsTimer = 0;
-        
-        public string GetCompressedDisplay()
+
+        // watch display and generate a new compressed display with preamble bit for filtering by clients
+        // but only if the display is marked stale.
+        private bool isDisplayStale = true;
+        private byte[] compressedDisplay = new byte[64 * 4 + 1];
+        public byte[] CompressedDisplay
         {
-            return Convert.ToBase64String(display);
+            get
+            {
+                if (isDisplayStale)
+                {
+                    // 64 x 32 pixel display - but it's only black / white so we are bit packing the X axis into 32/8 bytes = 4 bytes per, * 64 columns.
+                    isDisplayStale = false;
+                    compressedDisplay[0] = 0x01; // 0x01 is a display communication.
+                    int counter = 1;
+                    for (int x = 0; x < 64; x++)
+                    {
+                        for (int y = 0; y < 3; y++)
+                        {
+                            byte b = 0;
+                            for (int suby = 0; suby < 8; suby++)
+                            {
+                                if (display[x, y * 8 + suby])
+                                {
+                                    b |= (byte)(1 << (7 - suby));
+                                }
+                            }
+                            compressedDisplay[counter] = b;
+                            counter += 1;
+                        }
+                    }
+                }
+                return compressedDisplay;
+            }
+        }
+
+        private bool keyPressedSinceReset = false;
+
+        public void PressKey(byte key)
+        {
+            keys[(key & 0x0F)] = true;
+            keyPressedSinceReset = true;
+        }
+        public void UnpressKey(byte key)
+        {
+            keys[(key & 0x0F)] = false;
         }
 
         // pass in # of steps per second, eg. 60 steps per second.
-        public CPU(int stepspersecond)
+        public CPU(int cpustepspersecond)
         {
-            this.millisecondsPerCPUStep = (1000.0 / Math.Min(1000, stepspersecond));
+            this.millisecondsPerCPUStep = (1000.0 / Math.Min(1000, cpustepspersecond));
             byte[] fonts = new byte[] {
                 0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
                 0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -68,13 +179,19 @@ namespace Emulator
                 0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
                 0xF0, 0x80, 0xF0, 0x80, 0x80  // F
             };
-            
+
             // Load font data into RAM below 512 bytes.
             fonts.CopyTo(this.ram, 0);
             this.stopwatch = new Stopwatch();
             this.Reset();
         }
-
+        public byte[] DebugArray
+        {
+            get
+            {
+                return new byte[] { 0x0A, 0x0B, 0x0C };
+            }
+        }
         public void Reset()
         {
             this.stopwatch.Restart();
@@ -112,9 +229,15 @@ namespace Emulator
             return steps;
         }
 
+        private bool waitingForKeypress = false;
         private void step()
         {
             //grab current opcode and all opcode structures from PC
+            if ((pc < 0) || (pc > 0xFFE))
+            {
+                Console.WriteLine("PC was outside acceptable bounds.");
+                System.Environment.Exit(1);
+            }
             int opcode = (ram[pc] << 8 + ram[pc + 1]) & 0xFFFF;
             int nnn = opcode & 0x0FFF;
             byte kk = (byte)(opcode & 0x00FF);
@@ -123,15 +246,36 @@ namespace Emulator
             int y = opcode & 0x00F0;
             int z = opcode & 0x000F;
 
+
+
             // special handling for Fx0A - wait for a key press, store value of the key in VX
             // since this stops execution it has to be inserted before any other processing.
+            if (w == 0x0F && kk == 0x0A)
+            {
+                if (!waitingForKeypress)
+                {
+                    waitingForKeypress = true;
+                    keyPressedSinceReset = false;
+                    return;
+                }
+
+                else if (keyPressedSinceReset)
+                    pc += 2;
+                return;
+            }
 
             switch (w)
             {
                 case 0x0:
                     if (opcode == 0x00E0) // CLS - Clear the Display
                     {
-                        this.display = new byte[64 * 5];
+                        for (int dispx = 0; dispx < 64; dispx++)
+                        {
+                            for (int dispy = 0; dispy < 32; dispy++)
+                            {
+                                display[dispx, dispy] = false;
+                            }
+                        }
                     }
                     else if (opcode == 0x00EE) // RET - Return from Subroutine
                     {
@@ -268,6 +412,8 @@ namespace Emulator
                     // use XOR.  if any pixels are erased register 0xF = 1, otherwise 0. 
                     // sprites wrap around the display.
                     // TODO: implement drawing.
+                    // Mark display stale so it will be re-calculated.
+                    isDisplayStale = true;
                     break;
                 case 0xE:
                     switch(kk)
@@ -320,14 +466,14 @@ namespace Emulator
                             var temp = registers[x];
                             for (int o = 2; o >= 0; o--)
                             {
-                                ram[i+o] = (byte)(temp % 10);
+                                ram[i + o] = (byte)(temp % 10);
                                 temp /= 10;
                             }
                             break;
                         case 0x55:
                             // MVR - move registers into memory starting at location i.
                             var offset = i;
-                            for (int o = 0; o < x; o++)
+                            for (int o = 0; o<x; o++)
                             {
                                 ram[offset] = registers[o];
                                 offset += 1;
@@ -336,7 +482,7 @@ namespace Emulator
                         case 0x65:
                             // RDR - read registers from memory starting at location i.
                             var offset2 = i;
-                            for (int o = 0; o < x; o++)
+                            for (int o = 0; o<x; o++)
                             {
                                 registers[o] = ram[offset2];
                                 offset2 += 1;

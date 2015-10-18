@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,10 +46,10 @@ namespace UI
 
             // Subscribe to zipcode
             Console.WriteLine("Subscribing to UI events...");
-            subscriber.Subscribe("U");
+            subscriber.Subscribe(new byte[] { 0x01 });
 
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(20);
+            timer.Interval = TimeSpan.FromMilliseconds(5);
             timer.Tick += timer_Tick;
             timer.Start();
 
@@ -64,8 +65,14 @@ namespace UI
                     {
                         // if more than one message is waiting to be rendered, just render the most recent one that's there.
                         var frame = message[message.Count - 1];
-                        string reply = frame.ReadString();
-                        DateLabel.Content = reply.Substring(0,100);
+                        // copy array out of stream into an array.
+                        byte[] displayArray;
+                        using (var memoryStream = new MemoryStream((int)frame.Length))
+                        {
+                            frame.CopyTo(memoryStream);
+                            displayArray = memoryStream.ToArray();
+                        }
+                        DateLabel.Content = displayArray.ToString();
                     }
                 }
             }

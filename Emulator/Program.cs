@@ -30,16 +30,25 @@ namespace Emulator
                     if (steps > 0)
                     {
                         // Send current display to all subscribers
-                        var update = "U " + cpu.GetCompressedDisplay();
+                        var update = cpu.CompressedDisplay;
+
                         using (var updateFrame = new ZFrame(update))
                         {
                             Console.WriteLine(update);
                             publisher.Send(updateFrame);
                         }
+                        var update2 = cpu.DebugArray;
+
+                        using (var updateFrame = new ZFrame(update2))
+                        {
+                            Console.WriteLine(update2);
+                            publisher.Send(updateFrame);
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("no update to send..");
+                        Thread.Sleep(1);
+                        //Console.WriteLine("no update to send..");
                     }
                 }
             }
