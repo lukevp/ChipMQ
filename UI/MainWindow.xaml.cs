@@ -33,6 +33,7 @@ namespace UI
             context = new ZContext();
             subscriber = new ZSocket(context, ZSocketType.SUB);
             subscriber.ReceiveHighWatermark = 1;
+            // TODO: let the display update whenever it receives a message instead of doing timeouts.
             subscriber.ReceiveTimeout = new TimeSpan(0, 0, 0, 0, 5);
             subscriber.Connect("tcp://127.0.0.1:5556");
 
@@ -48,6 +49,7 @@ namespace UI
             Console.WriteLine("Subscribing to UI events...");
             subscriber.Subscribe(new byte[] { 0x01 });
 
+            // TODO: let the display update whenever it receives a message instead of doing timeouts.
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(5);
             timer.Tick += timer_Tick;
@@ -70,14 +72,42 @@ namespace UI
                         using (var memoryStream = new MemoryStream((int)frame.Length))
                         {
                             frame.CopyTo(memoryStream);
-                            displayArray = memoryStream.ToArray();
+                            // HACK: make this more optimized.
+                            displayArray = memoryStream.ToArray().Skip(1).ToArray();
                         }
-                        DateLabel.Content = displayArray.ToString();
+
+                        //DateLabel.Content = "1234";
+                        DrawDisplay(displayArray);
                     }
                 }
             }
-            catch (ZException)
-            { }
+            catch (Exception ex)
+            {
+
+            }
         }
+
+        void DrawDisplay(byte[] display)
+        {
+            var str = "";
+            for (int y = 0; y < 32; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int subx = 0; subx < 8; subx++)
+                        if ((display[y * 8 + x] & (byte)(1 << (7 - subx)))  != 0)
+                        {
+                            str += "X";
+                        }
+                        else
+                        {
+                            str += "-";
+                        }
+                }
+                str += "\n";
+            }
+            DateLabel.Content = str;
+        }
+       
     }
 }

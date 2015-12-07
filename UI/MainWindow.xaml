@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <Label x:Name="DateLabel" Content="Label" HorizontalAlignment="Left" Margin="187,121,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="DateLabel" Content="Label" HorizontalAlignment="Left" Margin="19,24,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
 
     </Grid>
 </Window>
