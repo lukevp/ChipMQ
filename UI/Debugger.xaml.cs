@@ -11,7 +11,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using ZeroMQ;
@@ -19,21 +18,29 @@ using ZeroMQ;
 namespace UI
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Debugger.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Debugger : Window
     {
         ZContext context;
         ZSocket subscriber;
 
-        public MainWindow()
+
+        public class CPUModel
+        {
+            public string Memory { get; set; }
+        }
+
+        public CPUModel CPU
+        {
+            get; set;
+        }
+
+        public Debugger()
         {
             InitializeComponent();
-
-            Debugger d = new Debugger();
-            d.Show();
-
-            // TODO: dispose these whhen exiting?
+            CPU = new CPUModel();
+            DataContext = this;
             context = new ZContext();
             subscriber = new ZSocket(context, ZSocketType.SUB);
             subscriber.ReceiveHighWatermark = 1;
@@ -49,9 +56,9 @@ namespace UI
 				}
 			} */
 
-            // Subscribe to Display Events
-            Console.WriteLine("Subscribing to UI events...");
-            subscriber.Subscribe(new byte[] { 0x01 });
+            // Subscribe to Debugger Events
+            Console.WriteLine("Subscribing to debugger events...");
+            subscriber.Subscribe(new byte[] { 0xFF });
 
             // TODO: let the display update whenever it receives a message instead of doing timeouts.
             DispatcherTimer timer = new DispatcherTimer();
@@ -72,16 +79,16 @@ namespace UI
                         // if more than one message is waiting to be rendered, just render the most recent one that's there.
                         var frame = message[message.Count - 1];
                         // copy array out of stream into an array.
-                        byte[] displayArray;
+                        byte[] debugArray;
                         using (var memoryStream = new MemoryStream((int)frame.Length))
                         {
                             frame.CopyTo(memoryStream);
                             // HACK: make this more optimized.
-                            displayArray = memoryStream.ToArray().Skip(1).ToArray();
+                            debugArray = memoryStream.ToArray().Skip(1).ToArray();
                         }
 
                         //DateLabel.Content = "1234";
-                        DrawDisplay(displayArray);
+                        UpdateDebugger(debugArray);
                     }
                 }
             }
@@ -91,27 +98,13 @@ namespace UI
             }
         }
 
-        void DrawDisplay(byte[] display)
+
+
+        void UpdateDebugger(byte[] debugArray)
         {
-            var str = "";
-            for (int y = 0; y < 32; y++)
-            {
-                for (int x = 0; x < 8; x++)
-                {
-                    for (int subx = 0; subx < 8; subx++)
-                        if ((display[y * 8 + x] & (byte)(1 << (7 - subx)))  != 0)
-                        {
-                            str += "X";
-                        }
-                        else
-                        {
-                            str += "-";
-                        }
-                }
-                str += "\n";
-            }
-            DateLabel.Content = str;
+            // TODO: de-serialize byte array to object
+            CPU.Memory = string.Join(" ", debugArray.Select(x => x.ToString()));
+
         }
-       
     }
 }

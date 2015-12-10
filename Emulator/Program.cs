@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,8 +14,11 @@ namespace Emulator
         static void Main(string[] args)
         {
 
-            CPU cpu = new CPU(60);
+            ICPU cpu = new CPU(60);
 
+            // TODO: present user with a way to load files.
+            var fileData = File.ReadAllBytes(@"C:\Projects\Development\CandL\ChipMQ\Games\Chip-8 Demos\Maze (alt) [David Winter, 199x].ch8");
+            cpu.Load(fileData);
 
 
             using (var context = new ZContext())
@@ -24,6 +28,7 @@ namespace Emulator
                 Console.WriteLine("Binding publisher on {0}", address);
                 publisher.Bind(address);
 
+                cpu.Reset();
                 var counter = 0;
                 while (true)
                 {
@@ -31,7 +36,7 @@ namespace Emulator
                     if (steps > 0)
                     {
                         // Send current display to all subscribers
-                        var update = cpu.CompressedDisplay;
+                        var update = cpu.DisplayArray;
                         using (var updateFrame = new ZFrame(update))
                         {
                             //Console.WriteLine(update);

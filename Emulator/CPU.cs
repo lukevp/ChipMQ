@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Emulator
 {
 
-    public class CPU
+    public class CPU : ICPU
     {
 
         // 4K of ram
@@ -50,7 +50,7 @@ namespace Emulator
         // but only if the display is marked stale.
         private bool isDisplayStale = true;
         private byte[] compressedDisplay = new byte[(64 * 4) + 1];
-        public byte[] CompressedDisplay
+        public byte[] DisplayArray
         {
             get
             {
@@ -58,6 +58,8 @@ namespace Emulator
                 {
                     // 64 x 32 pixel display - but it's only black / white so we are bit packing the X axis into 32/8 bytes = 4 bytes per, * 64 columns.
                     isDisplayStale = false;
+                    // TODO: create a shared library that can serialize/deserialize these objects and just returns the types we need.
+
                     compressedDisplay[0] = 0x01; // 0x01 is a display communication.
                     int counter = 1;
                     for (int y = 0; y < 32; y++)
@@ -93,6 +95,11 @@ namespace Emulator
             keys[(key & 0x0F)] = false;
         }
 
+        public void Load(byte[] data)
+        {
+            data.CopyTo(ram, 0x200);
+        }
+
         // pass in # of steps per second, eg. 60 steps per second.
         public CPU(int cpustepspersecond)
         {
@@ -125,12 +132,16 @@ namespace Emulator
         {
             get
             {
-                return new byte[] { 0x0A, 0x0B, 0x0C };
+                byte[] newArray = new byte[ram.Length + 1];
+                newArray[0] = 0xFF;
+                ram.CopyTo(newArray, 1);
+                return newArray;
             }
         }
         public void Reset()
         {
             this.stopwatch.Restart();
+            // TODO: reset all data to its default values and move the default values from the declarations.
         }
 
         // Returns # of steps that have been executed in a call.
@@ -158,26 +169,10 @@ namespace Emulator
             while (accumulatedMillisecondsCPU >= millisecondsPerCPUStep)
             {
                 accumulatedMillisecondsCPU -= millisecondsPerCPUStep;
-                steps += 1;
-                
-                // TODO: remove this test.
-                for (int y = 0; y < 32; y++)
-                {
-                    for (int x = 0; x < 64; x++)
-                    {
-                        if (x % 3 == 0 || y % 12 == 0)
-                        {
-                            this.display[y, x] = true;
-                        }
-                        else
-                        {
-                            this.display[y, x] = false;
-                        }
-                    }
-                }
-                this.isDisplayStale = true;
+                steps += 1;    
                 this.step();
             }
+
             lastMilliseconds = total;
             return steps;
         }
@@ -229,6 +224,7 @@ namespace Emulator
                                 display[dispx, dispy] = false;
                             }
                         }
+                        isDisplayStale = true;
                     }
                     else if (opcode == 0x00EE) // RET - Return from Subroutine
                     {

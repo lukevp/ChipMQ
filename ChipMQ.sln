@@ -10,15 +10,22 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Multiple Projects|Any CPU = Multiple Projects|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Multiple Projects|Any CPU.ActiveCfg = Multiple Projects|Any CPU
+		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Multiple Projects|Any CPU.Build.0 = Multiple Projects|Any CPU
 		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Multiple Projects|Any CPU.ActiveCfg = Multiple Projects|Any CPU
+		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Multiple Projects|Any CPU.Build.0 = Multiple Projects|Any CPU
 		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
