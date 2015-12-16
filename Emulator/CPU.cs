@@ -186,13 +186,13 @@ namespace Emulator
                 Console.WriteLine("PC was outside acceptable bounds.");
                 System.Environment.Exit(1);
             }
-            int opcode = (ram[pc] << 8 + ram[pc + 1]) & 0xFFFF;
+            int opcode = ((ram[pc] << 8) + (ram[pc + 1])) & 0xFFFF;
             int nnn = opcode & 0x0FFF;
             byte kk = (byte)(opcode & 0x00FF);
-            int w = opcode & 0xF000;
-            int x = opcode & 0x0F00;
-            int y = opcode & 0x00F0;
-            int z = opcode & 0x000F;
+            int w = (opcode & 0xF000) >> 12;
+            int x = (opcode & 0x0F00) >> 8;
+            int y = (opcode & 0x00F0) >> 4;
+            int z = (opcode & 0x000F);
 
 
 
