@@ -361,6 +361,33 @@ namespace Emulator
                     // use XOR.  if any pixels are erased register 0xF = 1, otherwise 0. 
                     // sprites wrap around the display.
                     // TODO: implement drawing.
+
+                    // X > 0x3F and Y > 0x1F are invalid.
+                    if (registers[x] > 0x3F)
+                    {
+                        Console.WriteLine("Invalid Register X Value for Sprite Draw Routine!");
+                    }
+                    if (registers[y] > 0x1F)
+                    {
+                        Console.WriteLine("Invalid Register Y Value for Sprite Draw Routine!");
+                    }
+                    registers[0x0F] = 0x00;
+                    for (int yadd = 0; yadd < z; yadd++)
+                    {
+                        byte valToDisplay = ram[i + yadd];
+                        for (int xadd = 0; xadd < 8; xadd++)
+                        {
+                            bool isValSet = ((valToDisplay & (1 << (7-xadd))) >> (7-xadd)) == 1;
+                            var screenX = (x + xadd) % 64;
+                            var screenY = (y + yadd) % 32;
+                            if (display[screenY, screenX] && isValSet)
+                            {
+                                registers[0x0F] = 0x01; // set collision flag since display value
+                                // and rendering value are both 1's which will XOR it to be zero.
+                            }
+                            display[screenY, screenX] ^= isValSet;
+                        }
+                    }
                     // Mark display stale so it will be re-calculated.
                     isDisplayStale = true;
                     break;
