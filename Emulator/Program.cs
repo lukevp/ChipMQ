@@ -17,7 +17,9 @@ namespace Emulator
             ICPU cpu = new CPU(60);
 
             // TODO: present user with a way to load files.
-            var fileData = File.ReadAllBytes(@"C:\Projects\Development\CandL\ChipMQ\Games\Chip-8 Demos\Maze (alt) [David Winter, 199x].ch8");
+            //var fileData = File.ReadAllBytes(@"C:\Projects\Development\CandL\ChipMQ\Games\Chip-8 Demos\Maze (alt) [David Winter, 199x].ch8");
+            var fileData = File.ReadAllBytes(@"C:\Projects\Development\CandL\ChipMQ\TestPrograms\fonttest.ch8");
+
             cpu.Load(fileData);
 
 
