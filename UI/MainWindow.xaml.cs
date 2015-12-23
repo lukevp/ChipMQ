@@ -101,15 +101,34 @@ namespace UI
                     for (int subx = 0; subx < 8; subx++)
                         if ((display[y * 8 + x] & (byte)(1 << (7 - subx)))  != 0)
                         {
-                            str += "X";
+                            str += "@";
                         }
                         else
                         {
-                            str += "-";
+                            str += ".";
                         }
                 }
                 str += "\n";
             }
+            /*
+            for (int y = 0; y < 32; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    byte b = 0;
+                    for (int subx = 0; subx < 8; subx++)
+                    {
+                        if (display[y, (x * 8) + subx])
+                        {
+                            b |= (byte)(1 << (7 - subx));
+                        }
+                    }
+                    compressedDisplay[counter] = b;
+                    counter += 1;
+                }
+            }*/
+
+
             DateLabel.Content = str;
         }
        
