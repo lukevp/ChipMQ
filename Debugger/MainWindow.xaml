@@ -1,0 +1,66 @@
+﻿<Window x:Class="Debugger.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Debugger"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="800">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30px"></RowDefinition>
+                <RowDefinition Height="30px"></RowDefinition>
+                <RowDefinition Height="30px"></RowDefinition>
+                <RowDefinition Height="30px"></RowDefinition>
+                <RowDefinition Height="30px"></RowDefinition>
+                <RowDefinition Height="30px"></RowDefinition>
+                <RowDefinition Height="30px"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="40px"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0">PC:</Label>
+            <Label Grid.Row="0" Grid.Column="1" Name="pc" Content="{Binding CPU.PC}"></Label>
+            <Label Grid.Row="0" Grid.Column="2">I:</Label>
+            <Label Grid.Row="0" Grid.Column="3" Name="i" Content="{Binding CPU.I}"></Label>
+            <Label Grid.Row="1" Grid.Column="0">REGS:</Label>
+            <Label Grid.Row="1" Grid.Column="1" Name="reg0" Content="{Binding CPU.Registers[0]}"></Label>
+            <Label Grid.Row="1" Grid.Column="2" Name="reg1" Content="{Binding CPU.Registers[1]}"></Label>
+            <Label Grid.Row="1" Grid.Column="3" Name="reg2" Content="{Binding CPU.Registers[2]}"></Label>
+            <Label Grid.Row="1" Grid.Column="4" Name="reg3" Content="{Binding CPU.Registers[3]}"></Label>
+            <Label Grid.Row="1" Grid.Column="5" Name="reg4" Content="{Binding CPU.Registers[4]}"></Label>
+            <Label Grid.Row="1" Grid.Column="6" Name="reg5" Content="{Binding CPU.Registers[5]}"></Label>
+            <Label Grid.Row="1" Grid.Column="7" Name="reg6" Content="{Binding CPU.Registers[6]}"></Label>
+            <Label Grid.Row="1" Grid.Column="8" Name="reg7" Content="{Binding CPU.Registers[7]}"></Label>
+            <Label Grid.Row="1" Grid.Column="9" Name="reg8" Content="{Binding CPU.Registers[8]}"></Label>
+            <Label Grid.Row="1" Grid.Column="10" Name="reg9" Content="{Binding CPU.Registers[9]}"></Label>
+            <Label Grid.Row="1" Grid.Column="11" Name="reg10" Content="{Binding CPU.Registers[10]}"></Label>
+            <Label Grid.Row="1" Grid.Column="12" Name="reg11" Content="{Binding CPU.Registers[11]}"></Label>
+            <Label Grid.Row="1" Grid.Column="13" Name="reg12" Content="{Binding CPU.Registers[12]}"></Label>
+            <Label Grid.Row="1" Grid.Column="14" Name="reg13" Content="{Binding CPU.Registers[13]}"></Label>
+            <Label Grid.Row="1" Grid.Column="15" Name="reg14" Content="{Binding CPU.Registers[14]}"></Label>
+            <Label Grid.Row="1" Grid.Column="16" Name="reg15" Content="{Binding CPU.Registers[15]}"></Label>
+            <TextBlock Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="1000"  x:Name="memory" HorizontalAlignment="Stretch"  TextWrapping="Wrap" Text="{Binding CPU.RAM}" VerticalAlignment="Stretch"/>
+
+        </Grid>
+    </Grid>
+</Window>

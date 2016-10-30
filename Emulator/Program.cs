@@ -14,11 +14,13 @@ namespace Emulator
         static void Main(string[] args)
         {
 
-            ICPU cpu = new CPU(60);
+            ICPU cpu = new CPU(800);
 
             // TODO: present user with a way to load files.
-            //var fileData = File.ReadAllBytes(@"C:\Projects\Development\CandL\ChipMQ\Games\Chip-8 Demos\Maze (alt) [David Winter, 199x].ch8");
-            var fileData = File.ReadAllBytes(@"C:\Projects\Development\CandL\ChipMQ\TestPrograms\fonttest.ch8");
+            //var fileData = File.ReadAllBytes(@"..\..\..\Games\Chip-8 Demos\Maze [David Winter, 199x].ch8");
+            var fileData = File.ReadAllBytes(@"..\..\..\Games\Chip-8 Games\Cave.ch8");
+            //var fileData = File.ReadAllBytes(@"..\..\..\TestPrograms\fonttest.ch8");
+            
 
             cpu.Load(fileData);
 
@@ -42,7 +44,7 @@ namespace Emulator
                         using (var updateFrame = new ZFrame(update))
                         {
                             //Console.WriteLine(update);
-                            Console.WriteLine(counter++);
+                            //Console.WriteLine(counter++);
                             publisher.Send(updateFrame);
                         }
                         var update2 = cpu.DebugArray;
@@ -58,6 +60,7 @@ namespace Emulator
                         //Thread.Sleep(100);
                         //Console.WriteLine("no update to send..");
                     }
+                    Thread.Sleep(16);
                 }
             }
         }

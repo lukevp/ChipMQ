@@ -29,11 +29,8 @@ namespace UI
         public MainWindow()
         {
             InitializeComponent();
-
-            Debugger d = new Debugger();
-            d.Show();
-
-            // TODO: dispose these whhen exiting?
+            
+            // TODO: dispose these when exiting?
             context = new ZContext();
             subscriber = new ZSocket(context, ZSocketType.SUB);
             subscriber.ReceiveHighWatermark = 1;

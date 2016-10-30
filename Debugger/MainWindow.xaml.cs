@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,20 +17,66 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using ZeroMQ;
 
-namespace UI
+namespace Debugger
 {
     /// <summary>
-    /// Interaction logic for Debugger.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class Debugger : Window
+    public partial class MainWindow : Window
     {
         ZContext context;
         ZSocket subscriber;
 
 
-        public class CPUModel
+        public class CPUModel : INotifyPropertyChanged
         {
-            public string Memory { get; set; }
+            private string _ram;
+            private string _pc;
+            private ObservableCollection<string> _registers;
+            public string RAM
+            {
+                get
+                {
+                    return _ram;
+                }
+                set
+                {
+                    _ram = value;
+                    NotifyPropertyChanged("RAM");
+                }
+            }
+            public string PC
+            {
+                get
+                {
+                    return _pc;
+                }
+                set
+                {
+                    _pc = value;
+                    NotifyPropertyChanged("PC");
+                }
+            }
+            public ObservableCollection<string> Registers
+            {
+                get
+                {
+                    return _registers;
+                }
+                set
+                {
+                    _registers = value;
+                    NotifyPropertyChanged("REGISTERS");
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            public void NotifyPropertyChanged(string propertyName)
+            {
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         public CPUModel CPU
@@ -36,7 +84,7 @@ namespace UI
             get; set;
         }
 
-        public Debugger()
+        public MainWindow()
         {
             InitializeComponent();
             CPU = new CPUModel();
@@ -98,12 +146,36 @@ namespace UI
             }
         }
 
+        private string ToHex(IEnumerable<byte> input)
+        {
+            return ToHex(input.ToArray());
+        }
 
+        private string ToHex(byte[] input)
+        {
+            return BitConverter.ToString(input).Replace("-", "");
+        }
+        private string ToHexWithSpaces(IEnumerable<byte> input)
+        {
+            return ToHexWithSpaces(input.ToArray());
+        }
+        private string ToHexWithSpaces(byte[] input)
+        {
+            return BitConverter.ToString(input).Replace("-", " ");
+        }
 
         void UpdateDebugger(byte[] debugArray)
         {
             // TODO: de-serialize byte array to object
-            CPU.Memory = string.Join(" ", debugArray.Select(x => x.ToString()));
+            CPU.PC = ToHex(debugArray.Take(2));
+            ObservableCollection<string> regs = new ObservableCollection<string>();
+            for (int j = 0; j < 16; j++)
+            {
+                regs.Add(ToHex(debugArray.Skip(2 + j).Take(1)));
+            }
+            CPU.Registers = regs;
+            //debugArray.Skip(2)
+            CPU.RAM = ToHexWithSpaces(debugArray.Skip(56));
 
         }
     }

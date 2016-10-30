@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{8E9C712D-5BAA-44F9-B66D-64F07E66C542}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator", "Emulator\Emulator.csproj", "{F662935C-4413-4DC9-8FF5-DE7EA05FE749}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Debugger", "Debugger\Debugger.csproj", "{7C9843D8-6A6A-4CDC-90AD-F3186DDAC7CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +21,7 @@ Global
 		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Multiple Projects|Any CPU.ActiveCfg = Multiple Projects|Any CPU
 		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Multiple Projects|Any CPU.Build.0 = Multiple Projects|Any CPU
+		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Multiple Projects|Any CPU.Deploy.0 = Multiple Projects|Any CPU
 		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E9C712D-5BAA-44F9-B66D-64F07E66C542}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -28,6 +31,12 @@ Global
 		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Multiple Projects|Any CPU.Build.0 = Multiple Projects|Any CPU
 		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F662935C-4413-4DC9-8FF5-DE7EA05FE749}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C9843D8-6A6A-4CDC-90AD-F3186DDAC7CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C9843D8-6A6A-4CDC-90AD-F3186DDAC7CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C9843D8-6A6A-4CDC-90AD-F3186DDAC7CA}.Multiple Projects|Any CPU.ActiveCfg = Release|Any CPU
+		{7C9843D8-6A6A-4CDC-90AD-F3186DDAC7CA}.Multiple Projects|Any CPU.Build.0 = Release|Any CPU
+		{7C9843D8-6A6A-4CDC-90AD-F3186DDAC7CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C9843D8-6A6A-4CDC-90AD-F3186DDAC7CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

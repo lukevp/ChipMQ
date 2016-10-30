@@ -1,0 +1,4 @@
+1) set register 0 to 0F (draw the letter F).
+2) Set I to the location of character in register 0.
+3) draw character at 0,0 with height of 5 px
+4) jmp to 207 (current location).  Basically freezes the program.

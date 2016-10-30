@@ -1,0 +1,13 @@
+Initialization
+1) set register 0 to 00 (draw the letter 0).
+2) set register 1 to 0 (x offset).
+3) set register 2 to 0 (y offset).
+
+Drawing Routine
+1) Set I to the location of character in register 0.
+2) draw character at x,y with height of 5 px.
+
+Incrementing Routine
+1) add 1 to register 0 (draw next character).
+2) add 6 to register 1 (space out on x axis b 6).
+3) jmp to drawing routine.
